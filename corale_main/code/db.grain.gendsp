@@ -1,0 +1,211 @@
+{
+	"patcher" : 	{
+		"fileversion" : 1,
+		"appversion" : 		{
+			"major" : 8,
+			"minor" : 6,
+			"revision" : 5,
+			"architecture" : "x64",
+			"modernui" : 1
+		}
+,
+		"classnamespace" : "dsp.gen",
+		"rect" : [ 712.0, 100.0, 960.0, 1195.0 ],
+		"bglocked" : 0,
+		"openinpresentation" : 0,
+		"default_fontsize" : 12.0,
+		"default_fontface" : 0,
+		"default_fontname" : "Arial",
+		"gridonopen" : 1,
+		"gridsize" : [ 15.0, 15.0 ],
+		"gridsnaponopen" : 1,
+		"objectsnaponopen" : 1,
+		"statusbarvisible" : 2,
+		"toolbarvisible" : 1,
+		"lefttoolbarpinned" : 0,
+		"toptoolbarpinned" : 0,
+		"righttoolbarpinned" : 0,
+		"bottomtoolbarpinned" : 0,
+		"toolbars_unpinned_last_save" : 0,
+		"tallnewobj" : 0,
+		"boxanimatetime" : 200,
+		"enablehscroll" : 1,
+		"enablevscroll" : 1,
+		"devicewidth" : 0.0,
+		"description" : "",
+		"digest" : "",
+		"tags" : "",
+		"style" : "",
+		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
+		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 819.0, 92.0, 28.0, 22.0 ],
+					"text" : "in 7"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-43",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 778.0, 14.0, 28.0, 22.0 ],
+					"text" : "in 6"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-42",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 627.399999999999977, 14.0, 28.0, 22.0 ],
+					"text" : "in 5"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-41",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 476.800000000000011, 14.0, 28.0, 22.0 ],
+					"text" : "in 4"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-40",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 326.0, 14.0, 28.0, 22.0 ],
+					"text" : "in 3"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-39",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 175.599999999999994, 14.0, 28.0, 22.0 ],
+					"text" : "in 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-38",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 25.0, 813.0, 35.0, 22.0 ],
+					"text" : "out 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-37",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 25.0, 14.0, 28.0, 22.0 ],
+					"text" : "in 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "hann(count, size) {\r\n\t\r\n\tphz = count/size;\r\n\tphz *= TWOPI;\r\n\t\r\n\treturn 0.5 - 0.5 * cos(phz);\r\n\t\r\n}\r\n\r\nmake_grain(voice, count, buf, size, position, pitch, spread, spray) {\r\n\t\r\n\ttrig = delta(count == voice) == 1;\r\n\r\n\tcount = min(counter(1, trig), latch(size, trig));\r\n\r\n\tpos = latch(position + (noise() * spray), trig);\r\n\tpos *= dim(buf);\r\n\tsprd = noise() * spread;\r\n\tsprd = pow(2, sprd);\r\n\ti = pos + (count * latch(pitch * sprd, trig));\r\n\r\n\tamp = hann(count, latch(size, trig));\r\n\tsmp = peek(buf, i, boundmode=\"wrap\", interp=\"cubic\");\r\n\r\n\tgrain = amp * smp;\r\n\t\r\n\treturn grain;\r\n\t\r\n}\r\n\r\nBuffer smpl(\"sound\");\r\ndensity = in2;\r\ngrain_size = in3;\r\npitch = in4;\r\nposition = in5;\r\nspread = in6;\r\nspray = in7;\r\n\r\nvoices = 30;\r\nsize = mstosamps(grain_size);\r\n\r\np = delta(phasor(density)) < 0;\r\npch = pow(2, pitch/12);\r\n\r\nc = counter(p, in1, voices);\r\n\r\noutSignal = 0;\r\n\r\nsig = make_grain(0, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(1, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(2, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(3, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(4, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(5, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(6, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(7, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(8, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(9, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(10, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(11, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(12, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(13, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(14, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(15, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(16, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(17, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(18, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(19, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(20, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(21, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(22, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(23, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(24, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(25, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(26, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(27, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(28, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\nsig = make_grain(29, c, smpl, size, position, pch, spread, spray);\r\noutSignal += sig;\r\n\r\n\r\nout1 = outSignal;",
+					"fontface" : 0,
+					"fontname" : "<Monospaced>",
+					"fontsize" : 12.0,
+					"id" : "obj-36",
+					"maxclass" : "codebox",
+					"numinlets" : 7,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 25.0, 44.0, 772.0, 754.0 ]
+				}
+
+			}
+ ],
+		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-36", 6 ],
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-38", 0 ],
+					"source" : [ "obj-36", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-36", 0 ],
+					"source" : [ "obj-37", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-36", 1 ],
+					"source" : [ "obj-39", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-36", 2 ],
+					"source" : [ "obj-40", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-36", 3 ],
+					"source" : [ "obj-41", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-36", 4 ],
+					"source" : [ "obj-42", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-36", 5 ],
+					"source" : [ "obj-43", 0 ]
+				}
+
+			}
+ ]
+	}
+
+}

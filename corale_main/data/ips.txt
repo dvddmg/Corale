@@ -1,0 +1,8 @@
+1, rp1.local;
+2, rp2.local;
+3, rp3.local;
+4, rp4.local;
+5, rp5.local;
+6, raspda.local;
+7, rpi3.local;
+8, rp4b.local;
