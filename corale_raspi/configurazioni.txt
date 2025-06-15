@@ -1,0 +1,7 @@
+Sudo apt-get install git qjackctl
+sudo apt-get install build-essential automake autoconf libtool gettext libasound2-dev libjack-jackd2-dev
+git clone https://github.com/pure-data/pure-data.git
+
+
+
+ ./configure --enable-jack
